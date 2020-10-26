@@ -1,0 +1,9 @@
+{
+  "python.pythonPath": "/Users/user/.local/share/virtualenvs/corona-map-FX651B72/bin/python",
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+
+"editor.formatOnSave": true,
+"python.formatting.provider": "black"
+}
