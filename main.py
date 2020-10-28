@@ -3,7 +3,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.express as px
-from data import countries_df, totals_df, dropdown_options
+from data import (
+    countries_df,
+    totals_df,
+    dropdown_options,
+    make_global_df,
+    make_country_df,
+)
 from builders import make_table
 
 
@@ -82,8 +88,15 @@ app.layout = html.Div(
             children=[
                 html.Div(children=html.Div(children=[dcc.Graph(figure=bars_graph)])),
                 html.Div(
+                    style={"grid-column": "span 3"},
                     children=[
                         dcc.Dropdown(
+                            style={
+                                "width": "320",
+                                "margin": "0 auto",
+                                "color": "#111111",
+                            },
+                            placeholder="Select a Country",
                             id="country",
                             options=[
                                 {
@@ -93,7 +106,7 @@ app.layout = html.Div(
                                 for country in dropdown_options
                             ],
                         ),
-                        html.H1(id="country-output"),
+                        dcc.Graph(id="country_graph"),
                     ],
                 ),
             ],
@@ -102,9 +115,31 @@ app.layout = html.Div(
 )
 
 
-@app.callback(Output("country-output", "children"), [Input("country", "value")])
+@app.callback(Output("country_graph", "figure"), [Input("country", "value")])
 def update_hello(value):
-    print(value)
+    if value:
+        df = make_country_df(value)
+    else:
+        df = make_global_df()
+    fig = px.line(
+        df,
+        x="date",
+        y=["confirmed", "deaths", "recovered"],
+        template="plotly_dark",
+        labels={
+            "value": "Cases",
+            "variable": "Condition",
+            "confirmed:": "Confirmed",
+            "deaths": "Deaths",
+            "recovered": "Recoverd",
+        },
+        hover_data={"value": ":,", "variable": False, "date": False},
+    )
+    fig.update_xaxes(rangeslider_visible=True)
+    fig["data"][0]["line"]["color"] = "#e74c3c"
+    fig["data"][1]["line"]["color"] = "#95a5a6"
+    fig["data"][2]["line"]["color"] = "#2ecc71"
+    return fig
 
 
 if __name__ == "__main__":
