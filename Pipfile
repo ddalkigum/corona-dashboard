@@ -12,6 +12,7 @@ pandas = "*"
 dash = "==1.16.3"
 jupyterlab = "*"
 jupyterthemes = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
